@@ -4,6 +4,7 @@ import { setupDB } from './db';
 import { genreRouter } from './routes/genres';
 import { utilisateurRouter } from './routes/utilisateurs';
 import { vinyleRouter } from './routes/vinyles';
+import { echangeRouter } from './routes/echanges';
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/genres', genreRouter);
 app.use('/api/utilisateurs', utilisateurRouter);
 app.use('/api/vinyles', vinyleRouter);
+app.use('/api/echanges', echangeRouter);
 
 async function startServer() {
   try {
