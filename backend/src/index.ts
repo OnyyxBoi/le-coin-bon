@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { setupDB } from './db';
 import { genreRouter } from './routes/genres';
+import { utilisateurRouter } from './routes/utilisateurs';
 
 const app = express();
 app.use(cors());
@@ -12,6 +13,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/genres', genreRouter);
+app.use('/api/utilisateurs', utilisateurRouter);
 
 async function startServer() {
   try {
