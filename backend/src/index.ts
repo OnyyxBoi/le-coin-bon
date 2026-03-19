@@ -1,18 +1,39 @@
 import express from 'express';
 import cors from 'cors';
+import { setupDB } from './db';
+import { genreRouter } from './routes/genres';
+import { utilisateurRouter } from './routes/utilisateurs';
+import { vinyleRouter } from './routes/vinyles';
+import { echangeRouter } from './routes/echanges';
+import { messageRouter } from './routes/messages';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({ message: 'OK' });
 });
 
-app.get('/api', (req, res) => {
-  res.json({ message: 'Hello from the backend!' });
-});
+app.use('/api/genres', genreRouter);
+app.use('/api/utilisateurs', utilisateurRouter);
+app.use('/api/vinyles', vinyleRouter);
+app.use('/api/echanges', echangeRouter);
+app.use('/api/messages', messageRouter);
 
-app.listen(3000, () => {
-  console.log('Backend listening on port 3000');
-});
+async function startServer() {
+  try {
+    const db = await setupDB();
+    console.log('Database initialized successfully.');
+
+    app.locals.db = db;
+
+    app.listen(3000, () => {
+      console.log('Backend listening on port 3000');
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+  }
+}
+
+startServer();
