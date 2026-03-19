@@ -106,7 +106,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import type { VinylDisplay, VinylFormData } from '@/types'
-import { useMockData } from '@/composables/useMockData'
+import { useMockData } from '../composables/useMockData'
 
 interface Props {
   vinyl?: VinylDisplay

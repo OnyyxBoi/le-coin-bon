@@ -59,7 +59,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { PlusIcon, MusicalNoteIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
-import { useMockData } from '@/composables/useMockData'
+import { useMockData } from '../composables/useMockData'
 import type { VinylDisplay, VinylFormData } from '@/types'
 import VinylCard from '@/components/VinylCard.vue'
 import VinylForm from '@/components/VinylForm.vue'

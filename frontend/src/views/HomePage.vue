@@ -98,7 +98,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { MusicalNoteIcon, MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/vue/24/outline'
-import { useMockData } from '@/composables/useMockData'
+import { useMockData } from '../composables/useMockData'
 import VinylCard from '@/components/VinylCard.vue'
 
 const router = useRouter()

@@ -256,7 +256,7 @@ import {
   ChatBubbleLeftRightIcon, 
   XMarkIcon 
 } from '@heroicons/vue/24/outline'
-import { useMockData } from '@/composables/useMockData'
+import { useMockData } from '../composables/useMockData'
 import type { ExchangeStatus } from '@/types'
 
 const { 

@@ -15,7 +15,6 @@
   
   function login() {
     console.log(`Utilisateur connecté : ${username.value}`);
-    // Simulation d'un ID utilisateur (normalement récupéré via un appel backend)
     const userId = username.value;
     alert(`Bienvenu ${userId}`);
   }

@@ -15,7 +15,6 @@
 </template>
 
 <script setup>
-// Tu peux importer ici tes composants si besoin
 </script>
 
 <style scoped>

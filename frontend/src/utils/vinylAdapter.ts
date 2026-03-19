@@ -1,5 +1,5 @@
 import type { Vinyl, User, Genre } from '@/types'
-import { useMockData } from '@/composables/useMockData'
+import { useMockData } from '../composables/useMockData'
 
 /**
  * Adaptateur pour convertir les vinyles avec leurs relations

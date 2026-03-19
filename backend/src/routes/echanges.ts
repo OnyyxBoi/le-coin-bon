@@ -81,7 +81,7 @@ echangeRouter.put('/:id', async (req, res) => {
       return res.status(400).json({ error: 'Le statut est requis' });
     }
 
-    const validStatuses = ['en attente', 'accepté', 'refusé'];
+    const validStatuses = ['en attente', 'en discussion', 'accepté', 'refusé'];
     if (!validStatuses.includes(statut)) {
       return res.status(400).json({ error: 'Statut invalide' });
     }

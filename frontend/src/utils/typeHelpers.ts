@@ -1,5 +1,5 @@
-import type { Vinyl, User, Genre, VinylDisplay } from '@/types'
-import { useMockData } from '@/composables/useMockData'
+import type { Vinyl, VinylDisplay } from '@/types'
+import { useMockData } from '../composables/useMockData'
 
 /**
  * Convertit un Vinyl en VinylDisplay pour l'affichage dans les composants

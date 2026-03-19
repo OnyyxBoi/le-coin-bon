@@ -73,8 +73,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
-import { useMockData } from '@/composables/useMockData'
-import type { Genre } from '@/types'
+import { useMockData } from '../composables/useMockData'
 import SearchBar from '@/components/SearchBar.vue'
 import VinylCard from '@/components/VinylCard.vue'
 
