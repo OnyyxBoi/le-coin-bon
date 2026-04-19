@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { setupDB } from './db';
+import { DATABASE_FILE, setupDB } from './db';
 import { genreRouter } from './routes/genres';
 import { utilisateurRouter } from './routes/utilisateurs';
 import { vinyleRouter } from './routes/vinyles';
@@ -24,7 +24,7 @@ app.use('/api/messages', messageRouter);
 async function startServer() {
   try {
     const db = await setupDB();
-    console.log('Database initialized successfully.');
+    console.log('Database initialized successfully.', DATABASE_FILE);
 
     app.locals.db = db;
 
