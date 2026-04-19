@@ -102,7 +102,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { VinylDisplay } from '../types'
-import { useMockData } from '../composables/useMockData'
+import { ensureInitialized } from '../composables/appData/initialization'
 
 interface Props {
   requestedVinyl: VinylDisplay
@@ -115,7 +115,7 @@ const emit = defineEmits<{
   close: []
 }>()
 
-useMockData()
+void ensureInitialized().catch(() => {})
 const selectedVinylIds = ref<string[]>([])
 
 function toggleVinyl(vinylId: string) {

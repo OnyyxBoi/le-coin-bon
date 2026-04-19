@@ -256,7 +256,7 @@ import {
   ChatBubbleLeftRightIcon, 
   XMarkIcon 
 } from '@heroicons/vue/24/outline'
-import { useMockData } from '../composables/useMockData'
+import { useAppData } from '../composables/useAppData'
 import type { ExchangeStatus } from '@/types'
 
 const { 
@@ -268,7 +268,7 @@ const {
   getExchangeWithDetails,
   getUserById,
   exchangeMessages
-} = useMockData()
+} = useAppData()
 
 const activeTab = ref<'received' | 'sent'>('received')
 const negotiationMessages = ref<Record<string, string>>({})

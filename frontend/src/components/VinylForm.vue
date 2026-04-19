@@ -106,7 +106,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import type { VinylDisplay, VinylFormData } from '@/types'
-import { useMockData } from '../composables/useMockData'
+import { useAppData } from '../composables/useAppData'
 
 interface Props {
   vinyl?: VinylDisplay
@@ -118,7 +118,7 @@ const emit = defineEmits<{
   close: []
 }>()
 
-const { genres } = useMockData()
+const { genres } = useAppData()
 const isEdit = computed(() => !!props.vinyl)
 
 const formData = ref<VinylFormData>({

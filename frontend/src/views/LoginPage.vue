@@ -11,11 +11,11 @@
   <script setup lang="ts">
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import { useMockData } from '../composables/useMockData';
+  import { useAppData } from '../composables/useAppData';
   
   const username = ref('');
   const router = useRouter();
-  const { setCurrentUserByPseudo } = useMockData();
+  const { setCurrentUserByPseudo } = useAppData();
   
   async function handleLogin() {
     try {
