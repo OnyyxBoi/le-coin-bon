@@ -1,26 +1,25 @@
 import type { Vinyl, User, Genre } from '@/types'
-import { useMockData } from '@/composables/useMockData'
+import { genres, users } from '../composables/appData/state'
 
 /**
  * Adaptateur pour convertir les vinyles avec leurs relations
  * en format compatible avec les composants existants
  */
 export function getVinylDisplayData(vinyl: Vinyl) {
-  const { users, genres } = useMockData()
-  const owner = users.value.find(u => u.id === vinyl.ownerId)
-  const genre = genres.value.find(g => g.id === vinyl.genreId)
-  
+  const owner = users.value.find((u) => u.id === vinyl.ownerId)
+  const genre = genres.value.find((g) => g.id === vinyl.genreId)
+
   return {
     id: vinyl.id,
-    title: vinyl.name, // Adaptation title -> name
+    title: vinyl.name,
     artist: vinyl.artist,
-    genre: genre?.name || '', // Adaptation genreId -> genre name
+    genre: genre?.name || '',
     genreId: vinyl.genreId,
     condition: vinyl.condition,
     description: vinyl.description,
     image: vinyl.image,
     ownerId: vinyl.ownerId,
-    ownerName: owner?.nickname || '' // Adaptation username -> nickname
+    ownerName: owner?.nickname || ''
   }
 }
 
@@ -29,6 +28,5 @@ export function getUserDisplayName(user: User | undefined): string {
 }
 
 export function getGenreName(genreId: string): string {
-  const { genres } = useMockData()
-  return genres.value.find(g => g.id === genreId)?.name || ''
+  return genres.value.find((g) => g.id === genreId)?.name || ''
 }

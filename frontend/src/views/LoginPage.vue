@@ -8,13 +8,26 @@
     </div>
   </template>
   
-  <script setup>
+  <script setup lang="ts">
   import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { useAppData } from '../composables/useAppData';
   
   const username = ref('');
+  const router = useRouter();
+  const { setCurrentUserByPseudo } = useAppData();
   
-  function handleLogin() {
-    alert(`Bienvenue ${username.value}`);
+  async function handleLogin() {
+    try {
+      const user = await setCurrentUserByPseudo(username.value);
+      if (!user) {
+        alert("Utilisateur introuvable (vérifie le pseudo).");
+        return;
+      }
+      router.push('/account');
+    } catch (e) {
+      alert((e as Error).message || "Erreur de connexion");
+    }
   }
   </script>
   

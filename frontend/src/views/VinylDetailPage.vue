@@ -95,13 +95,13 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
-import { useMockData } from '@/composables/useMockData'
+import { useAppData } from '../composables/useAppData'
 import OfferModal from '@/components/OfferModal.vue'
 import VinylCard from '@/components/VinylCard.vue'
 
 const route = useRoute()
 const router = useRouter()
-const { getVinylDisplayById, myVinyles, currentUser, createExchange, getSuggestedVinyles } = useMockData()
+const { getVinylDisplayById, myVinyles, currentUser, createExchange, getSuggestedVinyles } = useAppData()
 
 const vinylDisplay = computed(() => getVinylDisplayById(route.params.id as string))
 const isMyVinyl = computed(() => vinylDisplay.value?.ownerId === currentUser.value.id)
@@ -123,11 +123,11 @@ function getConditionClass(condition: string) {
   return classes[condition] || 'bg-gray-500'
 }
 
-function handleOfferSubmit(offeredVinylIds: string[]) {
+async function handleOfferSubmit(offeredVinylIds: string[]) {
   if (vinylDisplay.value) {
     const vinyl = getVinylDisplayById(vinylDisplay.value.id)
     if (vinyl) {
-      const exchange = createExchange({
+      const exchange = await createExchange({
         recipientId: vinyl.ownerId,
         initiatorVinylIds: offeredVinylIds,
         destinationVinylIds: [vinyl.id]

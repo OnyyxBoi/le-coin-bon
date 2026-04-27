@@ -98,11 +98,11 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { MusicalNoteIcon, MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/vue/24/outline'
-import { useMockData } from '@/composables/useMockData'
+import { useAppData } from '../composables/useAppData'
 import VinylCard from '@/components/VinylCard.vue'
 
 const router = useRouter()
-const { otherVinyles } = useMockData()
+const { otherVinyles } = useAppData()
 
 const recentVinyles = computed(() => otherVinyles.value.slice(0, 6))
 
