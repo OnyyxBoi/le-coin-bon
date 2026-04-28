@@ -59,3 +59,14 @@ export async function setCurrentUserByPseudo(pseudo: string) {
   currentUser.value = user
   return user
 }
+
+// Utilitaire pour les tests (réinitialise cache + état).
+export function __resetAppDataForTests() {
+  initPromise = null
+  genres.value = []
+  users.value = []
+  vinyles.value = []
+  exchanges.value = []
+  exchangeMessages.value = {}
+  currentUser.value = { id: '', nickname: '', email: '', password: '' }
+}

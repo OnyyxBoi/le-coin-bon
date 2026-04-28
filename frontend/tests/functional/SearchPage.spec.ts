@@ -5,6 +5,8 @@ import { userEvent } from '@testing-library/user-event'
 import SearchPage from '@/views/SearchPage.vue'
 import HomePage from '@/views/HomePage.vue'
 
+const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0))
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -36,10 +38,15 @@ describe('SearchPage - Tests fonctionnels', () => {
         plugins: [router]
       }
     })
+
+    // Attendre l'init async (mock fetch dans tests/setup.ts)
+    return flushPromises().then(async () => {
+      await wrapper.vm.$nextTick()
     
-    const genreButtons = wrapper.findAll('button')
-    const genreButton = genreButtons.find(btn => btn.text().includes('Rock'))
-    expect(genreButton).toBeDefined()
+      const genreButtons = wrapper.findAll('button')
+      const genreButton = genreButtons.find(btn => btn.text().includes('Rock'))
+      expect(genreButton).toBeDefined()
+    })
   })
 
   it('devrait permettre de filtrer par genre', async () => {
@@ -49,6 +56,7 @@ describe('SearchPage - Tests fonctionnels', () => {
       }
     })
     
+    await flushPromises()
     await wrapper.vm.$nextTick()
     
     const rockButton = wrapper.findAll('button').find(btn => btn.text() === 'Rock')
