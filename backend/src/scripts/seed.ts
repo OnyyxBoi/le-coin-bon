@@ -68,6 +68,37 @@ async function clearSeedVinyles(db: Awaited<ReturnType<typeof setupDB>>) {
   );
 }
 
+async function clearSeedUsersAndRelatedData(db: Awaited<ReturnType<typeof setupDB>>) {
+  const seedUsers = await db.all<{ id: number }[]>(
+    'SELECT id FROM Utilisateur WHERE email LIKE ?',
+    [`%${SEED_EMAIL_DOMAIN}`]
+  )
+  const ids = seedUsers.map((u) => Number(u.id)).filter((n) => Number.isFinite(n))
+  if (ids.length === 0) return
+
+  const placeholders = ids.map(() => '?').join(',')
+
+  await db.run(
+    `DELETE FROM Message
+     WHERE utilisateur_id IN (${placeholders})
+        OR transaction_id IN (
+          SELECT id FROM Echange
+          WHERE initiateur_id IN (${placeholders}) OR destinataire_id IN (${placeholders})
+        )`,
+    [...ids, ...ids, ...ids]
+  )
+
+  await db.run(
+    `DELETE FROM Echange
+     WHERE initiateur_id IN (${placeholders}) OR destinataire_id IN (${placeholders})`,
+    [...ids, ...ids]
+  )
+
+  await db.run(`DELETE FROM Vinyle WHERE utilisateur_id IN (${placeholders})`, ids)
+
+  await db.run(`DELETE FROM Utilisateur WHERE id IN (${placeholders})`, ids)
+}
+
 function vinylsForUser(pseudo: string): VinyleSeed[] {
   const catalog: Record<string, VinyleSeed[]> = {
     alice: [
@@ -199,6 +230,8 @@ async function main() {
     genreByName.set(nom, id);
   }
 
+
+  await clearSeedUsersAndRelatedData(db)
   await clearSeedVinyles(db);
 
   for (const u of SEED_USERS) {
