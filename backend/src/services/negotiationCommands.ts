@@ -27,6 +27,31 @@ function ensureNumberArray(value: unknown, label: string): number[] {
   return nums
 }
 
+// A simple in-memory queue to handle concurrent requests safely
+class Mutex {
+  private locked = false;
+  private queue: (() => void)[] = [];
+
+  async acquire() {
+    if (!this.locked) {
+      this.locked = true;
+      return;
+    }
+    return new Promise<void>(resolve => this.queue.push(resolve));
+  }
+
+  release() {
+    if (this.queue.length > 0) {
+      const next = this.queue.shift();
+      next?.();
+    } else {
+      this.locked = false;
+    }
+  }
+}
+
+const exchangeMutex = new Mutex();
+
 export class NegotiationCommandService {
   constructor(private readonly db: Database) {}
 
@@ -36,7 +61,28 @@ export class NegotiationCommandService {
     const vinyles_initiateur = ensureNumberArray(input.vinyles_initiateur, 'vinyles_initiateur')
     const vinyles_destinataire = ensureNumberArray(input.vinyles_destinataire, 'vinyles_destinataire')
 
+    // Lock the function so concurrent requests process one at a time
+    await exchangeMutex.acquire()
+
     try {
+      const activeExchanges = await this.db.all<{ vinyles_initiateur: string; vinyles_destinataire: string }[]>(
+        `SELECT vinyles_initiateur, vinyles_destinataire FROM Echange WHERE statut IN ('en attente', 'en discussion', 'accepté')`
+      )
+
+      const requestedVinyls = new Set([...vinyles_initiateur, ...vinyles_destinataire])
+
+      for (const row of activeExchanges) {
+        const vi: number[] = JSON.parse(row.vinyles_initiateur)
+        const vd: number[] = JSON.parse(row.vinyles_destinataire)
+        const activeVinyls = [...vi, ...vd]
+
+        for (const v of activeVinyls) {
+          if (requestedVinyls.has(v)) {
+            throw new ServiceError('Un ou plusieurs vinyles sont déjà dans un échange actif', 409)
+          }
+        }
+      }
+
       const result = await this.db.run(
         `INSERT INTO Echange (initiateur_id, destinataire_id, vinyles_initiateur, vinyles_destinataire)
          VALUES (?, ?, ?, ?)`,
@@ -52,10 +98,15 @@ export class NegotiationCommandService {
         statut: 'en attente' as const
       }
     } catch (e: any) {
+      if (e instanceof ServiceError) throw e
+
       if (typeof e?.message === 'string' && e.message.includes('FOREIGN KEY constraint failed')) {
         throw new ServiceError('initiateur_id ou destinataire_id invalide', 400)
       }
       throw e
+    } finally {
+      // Always unlock the mutex when done, even if an error occurred
+      exchangeMutex.release()
     }
   }
 
@@ -113,4 +164,3 @@ export class NegotiationCommandService {
     }
   }
 }
-

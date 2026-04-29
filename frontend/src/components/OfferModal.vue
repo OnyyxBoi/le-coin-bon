@@ -89,10 +89,10 @@
         <button 
           type="button" 
           class="flex-1 px-6 py-3 border-none rounded-lg text-base font-semibold cursor-pointer transition-all bg-gradient-to-r from-primary-500 to-purple-600 text-white hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary-500/40 disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="selectedVinylIds.length === 0"
+          :disabled="selectedVinylIds.length === 0 || isSubmitting"
           @click="handleSubmit"
         >
-          Proposer l'échange
+          {{ isSubmitting ? 'Envoi...' : "Proposer l'échange" }}
         </button>
       </div>
     </div>
@@ -117,6 +117,7 @@ const emit = defineEmits<{
 
 void ensureInitialized().catch(() => {})
 const selectedVinylIds = ref<string[]>([])
+const isSubmitting = ref(false)
 
 function toggleVinyl(vinylId: string) {
   const index = selectedVinylIds.value.indexOf(vinylId)
@@ -139,9 +140,14 @@ function getVinylById(id: string): VinylDisplay | undefined {
 }
 
 function handleSubmit() {
-  if (selectedVinylIds.value.length > 0) {
+  if (selectedVinylIds.value.length > 0 && !isSubmitting.value) {
+    isSubmitting.value = true
     emit('submit', selectedVinylIds.value)
-    emit('close')
+    
+    setTimeout(() => {
+      isSubmitting.value = false
+      emit('close')
+    }, 500)
   }
 }
 

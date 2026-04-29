@@ -17,7 +17,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '22'
+        node-version: '24'
 
     - name: Install backend dependencies
       working-directory: ./backend
@@ -39,6 +39,12 @@ jobs:
       working-directory: ./frontend
       run: yarn test
 
-    - name: Run frontend E2E tests
+    - name: Reset and Seed Test Database
+      working-directory: ./backend
+      run: |
+        rm -f *.sqlite
+        NODE_ENV=test yarn ts-node src/scripts/seed.ts
+
+    - name: Run E2E Tests
       working-directory: ./frontend
       run: yarn e2e

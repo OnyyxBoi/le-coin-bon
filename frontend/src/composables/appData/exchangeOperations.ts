@@ -23,19 +23,36 @@ export async function createExchange(exchangeData: ExchangeFormData): Promise<Ex
     throw new Error('IDs invalides pour créer un échange.')
   }
 
-  const created = await apiFetch<any>('/api/echanges', {
-    method: 'POST',
-    body: JSON.stringify({
-      initiateur_id: initiateurId,
-      destinataire_id: destinataireId,
-      vinyles_initiateur: vinylesInitiateur,
-      vinyles_destinataire: vinylesDestinataire
+  try {
+    const created = await apiFetch<any>('/api/echanges', {
+      method: 'POST',
+      body: JSON.stringify({
+        initiateur_id: initiateurId,
+        destinataire_id: destinataireId,
+        vinyles_initiateur: vinylesInitiateur,
+        vinyles_destinataire: vinylesDestinataire
+      })
     })
-  })
 
-  const mapped = mapExchange(created)
-  exchanges.value.push(mapped)
-  return mapped
+    const mapped = mapExchange(created)
+    exchanges.value.push(mapped)
+    
+    alert('Offre envoyée')
+    return mapped
+
+  } catch (error: any) {
+    console.error('Erreur API Echange:', error)
+    
+    const errorMsg = error?.message || String(error)
+    
+    if (errorMsg.toLowerCase().includes('déjà')) {
+      alert("Erreur : Ce vinyle est déjà dans un échange.")
+    } else {
+      alert("Erreur : Données invalides ou erreur serveur.")
+    }
+    
+    throw error
+  }
 }
 
 export async function updateExchangeStatus(exchangeId: string, status: ExchangeStatus) {
