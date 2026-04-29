@@ -5,9 +5,9 @@ import { open } from 'sqlite';
 /** Toujours le même fichier que le cwd (évite un seed dans backend/ et un serveur lancé depuis la racine). */
 export const DATABASE_FILE = path.resolve(__dirname, '..', 'database.sqlite');
 
-export async function setupDB() {
+export async function setupDB(filename: string = DATABASE_FILE) {
   const db = await open({
-    filename: DATABASE_FILE,
+    filename,
     driver: sqlite3.Database
   });
 

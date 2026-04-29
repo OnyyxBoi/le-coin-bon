@@ -5,6 +5,8 @@ import HomePage from '@/views/HomePage.vue'
 import SearchPage from '@/views/SearchPage.vue'
 import AccountPage from '@/views/AccountPage.vue'
 
+const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0))
+
 // Créer un router pour les tests
 const router = createRouter({
   history: createWebHistory(),
@@ -62,6 +64,7 @@ describe('HomePage - Tests fonctionnels', () => {
       }
     })
     
+    await flushPromises()
     await wrapper.vm.$nextTick()
     
     expect(wrapper.text()).toContain('Vinyles récents')
