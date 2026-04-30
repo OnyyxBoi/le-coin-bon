@@ -1,6 +1,6 @@
 import { apiFetch } from '../../api/client'
 import { mapVinyle } from '../../api/mappers'
-import type { VinylDisplay, VinylFormData } from '../../types'
+import type { Vinyl, VinylDisplay, VinylFormData } from '../../types'
 import { vinylesToDisplay } from '../../utils/typeHelpers'
 import { ensureInitialized } from './initialization'
 import { currentUser, users, vinyles } from './state'
@@ -60,8 +60,8 @@ export async function deleteVinyl(id: string) {
   vinyles.value = vinyles.value.filter((v) => v.id !== id)
 }
 
-export function searchVinyles(query: string, genreId?: string): VinylDisplay[] {
-  if (!query.trim() && !genreId) return []
+export function searchVinyles(query: string, genreId?: string, condition?: Vinyl['condition']): VinylDisplay[] {
+  if (!query.trim() && !genreId && !condition) return []
   const lowerQuery = query.toLowerCase()
   const filtered = vinyles.value.filter((v) => {
     if (v.ownerId === currentUser.value.id) return false
@@ -73,7 +73,8 @@ export function searchVinyles(query: string, genreId?: string): VinylDisplay[] {
       v.artist.toLowerCase().includes(lowerQuery) ||
       (owner && owner.nickname.toLowerCase().includes(lowerQuery))
     const matchesGenre = !genreId || v.genreId === genreId
-    return matchesQuery && matchesGenre
+    const matchesCondition = !condition || v.condition === condition
+    return matchesQuery && matchesGenre && matchesCondition
   })
   return vinylesToDisplay(filtered)
 }
