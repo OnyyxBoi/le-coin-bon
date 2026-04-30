@@ -3,6 +3,9 @@ import { mapExchange, mapGenre, mapMessage, mapUser, mapVinyle } from '../../api
 import { currentUser, exchanges, exchangeMessages, genres, users, vinyles } from './state'
 
 let initPromise: Promise<void> | null = null
+let autoSelectEnabled = true
+
+const EMPTY_USER = { id: '', nickname: '', email: '', password: '' }
 
 async function fetchGenres() {
   const apiGenres = await apiFetch<any[]>('/api/genres')
@@ -40,7 +43,7 @@ export async function ensureInitialized(): Promise<void> {
     await fetchVinyles()
     await fetchExchanges()
 
-    if (!currentUser.value.id && users.value.length > 0) {
+    if (autoSelectEnabled && !currentUser.value.id && users.value.length > 0) {
       currentUser.value = users.value[0]!
     }
 
@@ -53,6 +56,7 @@ export async function ensureInitialized(): Promise<void> {
 
 export async function setCurrentUserByPseudo(pseudo: string) {
   await ensureInitialized()
+  autoSelectEnabled = true
   const normalized = pseudo.trim().toLowerCase()
   const user = users.value.find((u) => u.nickname.toLowerCase() === normalized)
   if (!user) return null
@@ -60,13 +64,19 @@ export async function setCurrentUserByPseudo(pseudo: string) {
   return user
 }
 
+export function logoutCurrentUser() {
+  autoSelectEnabled = false
+  currentUser.value = { ...EMPTY_USER }
+}
+
 // Utilitaire pour les tests (réinitialise cache + état).
 export function __resetAppDataForTests() {
   initPromise = null
+  autoSelectEnabled = true
   genres.value = []
   users.value = []
   vinyles.value = []
   exchanges.value = []
   exchangeMessages.value = {}
-  currentUser.value = { id: '', nickname: '', email: '', password: '' }
+  currentUser.value = { ...EMPTY_USER }
 }

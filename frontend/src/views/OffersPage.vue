@@ -83,22 +83,28 @@
               </div>
             </div>
 
-            <div v-if="exchange.status === 'en attente'" class="flex gap-3 flex-wrap">
-              <button 
+            <div
+              v-if="exchange.status === 'en attente' || exchange.status === 'en discussion'"
+              class="flex gap-3 flex-wrap"
+            >
+              <button
+                v-if="exchange.status === 'en attente' || exchange.status === 'en discussion'"
                 class="flex-1 min-w-[120px] px-5 py-2.5 border-none rounded-lg text-sm font-semibold cursor-pointer transition-all bg-green-100 text-green-800 hover:bg-green-200 flex items-center justify-center gap-2"
                 @click="handleAccept(exchange.id)"
               >
                 <CheckIcon class="w-4 h-4" />
                 Accepter
               </button>
-              <button 
+              <button
+                v-if="exchange.status === 'en attente'"
                 class="flex-1 min-w-[120px] px-5 py-2.5 border-none rounded-lg text-sm font-semibold cursor-pointer transition-all bg-blue-100 text-blue-800 hover:bg-blue-200 flex items-center justify-center gap-2"
                 @click="startNegotiation(exchange.id)"
               >
                 <ChatBubbleLeftRightIcon class="w-4 h-4" />
                 Négocier
               </button>
-              <button 
+              <button
+                v-if="exchange.status === 'en attente' || exchange.status === 'en discussion'"
                 class="flex-1 min-w-[120px] px-5 py-2.5 border-none rounded-lg text-sm font-semibold cursor-pointer transition-all bg-red-100 text-red-800 hover:bg-red-200 flex items-center justify-center gap-2"
                 @click="handleReject(exchange.id)"
               >
@@ -106,7 +112,6 @@
                 Refuser
               </button>
             </div>
-
             <div v-if="exchange.status === 'en discussion' && exchange.messages" class="mt-6 pt-6 border-t border-gray-200">
               <div class="flex flex-col gap-3 max-h-[300px] overflow-y-auto mb-4">
                 <div 
@@ -257,7 +262,7 @@ import {
   XMarkIcon 
 } from '@heroicons/vue/24/outline'
 import { useAppData } from '../composables/useAppData'
-import type { ExchangeStatus } from '@/types'
+import type { ExchangeStatus } from '../types'
 
 const { 
   receivedExchanges, 
@@ -266,8 +271,7 @@ const {
   updateExchangeStatus, 
   addMessageToExchange,
   getExchangeWithDetails,
-  getUserById,
-  exchangeMessages
+  getUserById
 } = useAppData()
 
 const activeTab = ref<'received' | 'sent'>('received')

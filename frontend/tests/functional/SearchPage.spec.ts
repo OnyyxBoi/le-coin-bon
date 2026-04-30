@@ -49,6 +49,21 @@ describe('SearchPage - Tests fonctionnels', () => {
     })
   })
 
+  it("devrait afficher le filtre par état", async () => {
+    const wrapper = mount(SearchPage, {
+      global: {
+        plugins: [router]
+      }
+    })
+
+    await flushPromises()
+    await wrapper.vm.$nextTick()
+
+    const select = wrapper.find('select[aria-label="Filtrer par état"]')
+    expect(select.exists()).toBe(true)
+    expect(wrapper.text()).toContain('État')
+  })
+
   it('devrait permettre de filtrer par genre', async () => {
     const wrapper = mount(SearchPage, {
       global: {

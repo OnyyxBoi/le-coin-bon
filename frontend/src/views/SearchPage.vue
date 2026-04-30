@@ -8,6 +8,28 @@
           @search="handleSearch"
           placeholder="Rechercher par titre, artiste ou propriétaire..."
         />
+        <div class="mt-4 flex justify-center">
+          <div class="inline-flex rounded-xl border-2 border-gray-200 bg-white shadow-sm overflow-hidden">
+            <button
+              type="button"
+              class="px-4 py-2.5 text-sm font-semibold transition-all border-r border-gray-200"
+              :class="selectedCondition === '' ? 'bg-gray-100 text-gray-800' : 'bg-white text-gray-600 hover:bg-gray-50'"
+              @click="setCondition('')"
+            >
+              Tous
+            </button>
+            <button
+              v-for="c in conditions"
+              :key="c"
+              type="button"
+              class="px-4 py-2.5 text-sm font-semibold transition-all border-r border-gray-200 last:border-r-0"
+              :class="getConditionClass(c)"
+              @click="setCondition(c)"
+            >
+              {{ c }}
+            </button>
+          </div>
+        </div>
         <div class="mt-4 flex flex-wrap gap-2 justify-center">
           <button
             v-for="genre in genres"
@@ -74,6 +96,7 @@ import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { useAppData } from '../composables/useAppData'
+import type { Vinyl } from '../types'
 import SearchBar from '@/components/SearchBar.vue'
 import VinylCard from '@/components/VinylCard.vue'
 
@@ -82,7 +105,10 @@ const { otherVinyles, searchVinyles, genres } = useAppData()
 
 const searchQuery = ref('')
 const selectedGenreId = ref<string | undefined>(undefined)
+const selectedCondition = ref<Vinyl['condition'] | ''>('')
 const searchResults = ref<ReturnType<typeof searchVinyles>>([])
+
+const conditions = ['Neuf', 'Très bon', 'Bon', 'Moyen', 'Usé'] as const
 
 const suggestedVinyles = computed(() => {
   if (selectedGenreId.value) {
@@ -95,18 +121,23 @@ const suggestedVinyles = computed(() => {
 })
 
 const hasActiveSearch = computed(() => {
-  return searchQuery.value.trim().length > 0 || selectedGenreId.value !== undefined
+  return (
+    searchQuery.value.trim().length > 0 ||
+    selectedGenreId.value !== undefined ||
+    selectedCondition.value !== ''
+  )
 })
 
 // Recherche automatique quand la query change
-watch([searchQuery, selectedGenreId], () => {
+watch([searchQuery, selectedGenreId, selectedCondition], () => {
   performSearch()
 })
 
 function performSearch() {
   const query = searchQuery.value.trim()
-  if (query || selectedGenreId.value) {
-    searchResults.value = searchVinyles(query, selectedGenreId.value)
+  const condition = selectedCondition.value || undefined
+  if (query || selectedGenreId.value || condition) {
+    searchResults.value = searchVinyles(query, selectedGenreId.value, condition)
   } else {
     searchResults.value = []
   }
@@ -129,6 +160,39 @@ function toggleGenre(genreId: string) {
 function clearGenre() {
   selectedGenreId.value = undefined
   performSearch()
+}
+
+function setCondition(condition: Vinyl['condition'] | '') {
+  selectedCondition.value = selectedCondition.value === condition ? '' : condition
+  performSearch()
+}
+
+function getConditionClass(condition: Vinyl['condition']) {
+  const selected = selectedCondition.value === condition
+  const base = 'hover:brightness-95'
+  const palette: Record<Vinyl['condition'], { on: string; off: string }> = {
+    Neuf: {
+      on: 'bg-emerald-100 text-emerald-900',
+      off: 'bg-white text-emerald-800 hover:bg-emerald-50'
+    },
+    'Très bon': {
+      on: 'bg-green-100 text-green-900',
+      off: 'bg-white text-green-800 hover:bg-green-50'
+    },
+    Bon: {
+      on: 'bg-yellow-100 text-yellow-900',
+      off: 'bg-white text-yellow-800 hover:bg-yellow-50'
+    },
+    Moyen: {
+      on: 'bg-orange-100 text-orange-900',
+      off: 'bg-white text-orange-800 hover:bg-orange-50'
+    },
+    'Usé': {
+      on: 'bg-red-100 text-red-900',
+      off: 'bg-white text-red-800 hover:bg-red-50'
+    }
+  }
+  return `${selected ? palette[condition].on : palette[condition].off} ${base}`
 }
 
 function goToVinylDetail(id: string) {
