@@ -9,7 +9,11 @@
           placeholder="Rechercher par titre, artiste ou propriétaire..."
         />
         <div class="mt-4 flex justify-center">
-          <div class="inline-flex rounded-xl border-2 border-gray-200 bg-white shadow-sm overflow-hidden">
+          <div
+            class="inline-flex rounded-xl border-2 border-gray-200 bg-white shadow-sm overflow-hidden"
+            role="group"
+            aria-label="Filtrer par état"
+          >
             <button
               type="button"
               class="px-4 py-2.5 text-sm font-semibold transition-all border-r border-gray-200"

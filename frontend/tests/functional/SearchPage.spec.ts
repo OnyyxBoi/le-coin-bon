@@ -59,9 +59,14 @@ describe('SearchPage - Tests fonctionnels', () => {
     await flushPromises()
     await wrapper.vm.$nextTick()
 
-    const select = wrapper.find('select[aria-label="Filtrer par état"]')
-    expect(select.exists()).toBe(true)
-    expect(wrapper.text()).toContain('État')
+    const group = wrapper.find('[aria-label="Filtrer par état"]')
+    expect(group.exists()).toBe(true)
+    expect(group.text()).toContain('Tous')
+    expect(group.text()).toContain('Neuf')
+    expect(group.text()).toContain('Très bon')
+    expect(group.text()).toContain('Bon')
+    expect(group.text()).toContain('Moyen')
+    expect(group.text()).toContain('Usé')
   })
 
   it('devrait permettre de filtrer par genre', async () => {
