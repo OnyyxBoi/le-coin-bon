@@ -14,7 +14,7 @@ import {
   getVinylDisplayById,
   getVinylWithDetails
 } from './appData/getters'
-import { ensureInitialized, setCurrentUserByPseudo } from './appData/initialization'
+import { ensureInitialized, logoutCurrentUser, setCurrentUserByPseudo } from './appData/initialization'
 import { currentUser, exchanges, exchangeMessages, genres, users, vinyles } from './appData/state'
 import {
   addVinyl,
@@ -79,6 +79,7 @@ export function useAppData() {
 
     addMessageToExchange,
 
-    setCurrentUserByPseudo
+    setCurrentUserByPseudo,
+    logoutCurrentUser
   }
 }

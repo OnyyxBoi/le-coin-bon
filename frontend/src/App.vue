@@ -2,10 +2,19 @@
 import { RouterView, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { MusicalNoteIcon } from '@heroicons/vue/24/solid'
+import { useAppData } from './composables/useAppData'
 
 const router = useRouter()
 
 const currentPath = computed(() => router.currentRoute.value.path)
+
+const { currentUser, logoutCurrentUser } = useAppData()
+const isLoggedIn = computed(() => Boolean(currentUser.value.id))
+
+function handleLogout() {
+  logoutCurrentUser()
+  router.push('/')
+}
 </script>
 
 <template>
@@ -65,6 +74,33 @@ const currentPath = computed(() => router.currentRoute.value.path)
             ></span>
           </router-link>
         </nav>
+
+        <div class="flex items-center gap-3">
+          <div
+            class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-sm"
+          >
+            <span class="text-gray-800">
+              {{ isLoggedIn ? 'Connecté en tant que ' + currentUser.nickname : 'Non connecté' }}
+            </span>
+          </div>
+
+          <router-link
+            v-if="!isLoggedIn"
+            to="/login"
+            class="px-4 py-2 rounded-lg text-sm font-semibold no-underline bg-white text-gray-700 border-2 border-gray-200 hover:bg-gray-50 transition-all"
+          >
+            Login
+          </router-link>
+
+          <button
+            v-else
+            type="button"
+            class="px-4 py-2 rounded-lg text-sm font-semibold bg-red-100 text-red-800 hover:bg-red-200 transition-all"
+            @click="handleLogout"
+          >
+            Logout
+          </button>
+        </div>
       </div>
     </header>
 
